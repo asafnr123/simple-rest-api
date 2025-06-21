@@ -1,13 +1,13 @@
 
 class Car:
 
-    def __init__(self, car_id, manufacturer, model, year, horsePower):
+    def __init__(self, id, manufacturer, model, year, horsePower):
         
-        self.id = car_id
+        self.id = id
         self.manufacturer = manufacturer
         self.model = model
         self.year = year
-        self.hp = horsePower
+        self.horsePower = horsePower
 
 
     
@@ -18,7 +18,7 @@ class Car:
             "manufacturer": self.manufacturer,
             "model": self.model,
             "year": self.year,
-            "hp": self.hp
+            "horsePower": self.horsePower
         }
     
 

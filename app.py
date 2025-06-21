@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from datetime import datetime
 import uuid
 from car import Car
 
@@ -11,7 +12,7 @@ cars = {
 
 @app.route("/", methods=['GET'])
 def getHomePage():
-    return "<p>I love cars</p>"
+    return "<h2>I love cars</h2>"
 
 
 
@@ -30,27 +31,34 @@ def get_all_cars():
 # create a car
 @app.route("/cars", methods=['POST'])
 def add_new_car():
-    required_fields = ["manufacturer", "model", "year", "horsePower"]
     car = request.get_json()
 
-    if not all(field in car for field in required_fields):
-        return jsonify({"error": "Invalid car data type"}), 400
-    
-    
-    try:
-        new_car = Car(
-            car_id = str(uuid.uuid4()),
-            manufacturer = car["manufacturer"],
-            model = car["model"],
-            year = car["year"],
-            horsePower = car["horsePower"]
-        )
-    except TypeError:
-        return jsonify({"error": "Invalid car data type"}), 400
-    
-    cars[new_car.id] = new_car.to_json_format()
+    isCar, errorMsg = check_car_format(car) #returns a tuple of (true/flase, errorMsg)
 
-    return jsonify({"id": new_car.id, "car": new_car.to_json_format()}), 201
+    if isCar:
+        try:
+            newCar = Car(
+                id= str(uuid.uuid4()),
+                manufacturer= car["manufacturer"],
+                model= car["model"],
+                year= car["year"],
+                horsePower= car["horsePower"]
+            )
+
+            cars[newCar.id] = newCar
+            return jsonify({"message": "Successfully Created", "car": newCar.to_json_format()})
+        
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+    else:
+        return jsonify({"error": errorMsg}), 400
+        
+
+
+    
+    
+
+
     
 
 # get a specific car
@@ -61,6 +69,8 @@ def get_car(car_id):
         return jsonify(cars[car_id])
     else:
         return jsonify({"message": f"No car with id {car_id}"}), 404
+    
+
 
 
 
@@ -71,7 +81,7 @@ def update_car(car_id, new_car):
     car = cars.get(car_id)
 
     if car:
-        if not all()
+        None
 
 
 # delete a car
@@ -79,11 +89,36 @@ def update_car(car_id, new_car):
 
 
 
-# a function that checks if a json request is a valid Car object
 
-def check_car_format(car):
+# checks if a json request is a valid Car object, return true if all god, if not returns a tuple (false, error msg)
+def check_car_format(json_car):
+    
     required_fields = ["manufacturer", "model", "year", "horsePower"]
 
+    # first check if car is a valid json
+    if json_car is None:
+        return False, "Invalid JSON format"
+    # then check if json got all the required fields
+    if all(field in json_car for field in required_fields):
+
+        # check if the car's year is from 1885 until today, if its not return false
+        if not (isinstance(json_car["year"], int) and 1885 <= json_car["year"] <= datetime.now().year ):
+            return False, "Year must be a number between 1885 and current year"
+        
+        # check if the horse power is a number thats bigger then 0
+        if not (isinstance(json_car["horsePower"], int) and json_car["horsePower"] > 0):
+            return False, "Horse power must be a positive integer"
+    else:
+        return False, "Car must include the following parameters: manufacturer, model, year, horsePower" 
+    
+    return True, None
+    
+    
+    
+                
+       
+        
+    
     
 
 
