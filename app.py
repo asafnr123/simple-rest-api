@@ -23,7 +23,7 @@ def get_all_cars():
     if cars:
         return jsonify(cars), 200
     else:
-        return jsonify({"message": "No cars found"}), 404
+        return jsonify({"error": "No cars found"}), 404
     
 
 
@@ -46,7 +46,7 @@ def add_new_car():
             )
 
             cars[newCar.id] = newCar.to_json_format()
-            return jsonify({"message": "Successfully Created", "car": newCar.to_json_format()})
+            return jsonify({"message": "Successfully Created", "car": newCar.to_json_format()}), 200
         
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -68,7 +68,7 @@ def get_car(car_id):
     if car:
         return jsonify(cars[car_id]), 200
     else:
-        return jsonify({"message": f"No car with id {car_id}"}), 404
+        return jsonify({"error": f"No car with id {car_id}"}), 404
     
 
 
@@ -77,14 +77,33 @@ def get_car(car_id):
 
 # update a car
 @app.route("/cars/<car_id>", methods=['PUT'])
-def update_car(car_id, new_car):
+def update_car(car_id):
     car = cars.get(car_id)
 
     if car:
-        cars[car[id]]
+        new_car = request.get_json()
+
+        isCarType, errorMsg = check_car_format(new_car)
+
+        if isCarType:
+            cars[car_id] = new_car
+            return jsonify({"message": f"Successfully updated {new_car['manufacturer']} {new_car['model']}"}), 200
+        else:
+            return jsonify({"error": f"ERROR: {errorMsg}"}), 400
+    else:
+        return jsonify({"error": f"No car with id {car_id}"}), 404
 
 
 # delete a car
+@app.route("/cars/<car_id>", methods=['DELETE'])
+def remove_car(car_id):
+    car = cars.get(car_id)
+
+    if car:
+        del cars[car_id]
+        return jsonify({"message": f"Successfully deleted {car['manufacturer']} {car['model']}"}), 200
+    else:
+        return jsonify({"error": f"No car with id {car_id}"}), 404
 
 
 
