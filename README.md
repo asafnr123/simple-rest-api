@@ -14,8 +14,8 @@ It supports basic CRUD operations: Create, Read, Update, Delete.
   * python -m venv your_venv
   * your_venv\source\activate
 - on linux:
-- python3 -m venv your_venv
-- source your_venv/bin/activate
+  * python3 -m venv your_venv
+  * source your_venv/bin/activate
 
 ### 3. install requirements.txt file
 - pip install -r requirements.txt
