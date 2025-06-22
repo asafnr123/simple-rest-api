@@ -66,7 +66,7 @@ def add_new_car():
 def get_car(car_id):
     car = cars.get(car_id)
     if car:
-        return jsonify(cars[car_id])
+        return jsonify(cars[car_id]), 200
     else:
         return jsonify({"message": f"No car with id {car_id}"}), 404
     
@@ -81,7 +81,7 @@ def update_car(car_id, new_car):
     car = cars.get(car_id)
 
     if car:
-        None
+        cars[car[id]]
 
 
 # delete a car
