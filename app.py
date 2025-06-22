@@ -45,7 +45,7 @@ def add_new_car():
                 horsePower= car["horsePower"]
             )
 
-            cars[newCar.id] = newCar
+            cars[newCar.id] = newCar.to_json_format()
             return jsonify({"message": "Successfully Created", "car": newCar.to_json_format()})
         
         except Exception as e:
